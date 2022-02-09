@@ -32,6 +32,11 @@ app.get('/', (req, res) => {
     res.json(persons)
   })
 
+  app.get('/info', (req, res) => {
+    const response = '<p> Phonebook has '+persons.length+' contacts<p>'
+    res.send(response + new Date)
+  })
+
   app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     const person = persons.find(p => p.id === id)
@@ -42,9 +47,11 @@ app.get('/', (req, res) => {
     }
   })
 
-  app.get('/info', (req, res) => {
-    const response = '<p> Phonebook has '+persons.length+' contacts<p>'
-    res.send(response + new Date)
+  app.delete('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id)
+    persons = persons.filter(p => p.id !== id)
+  
+    response.status(204).end()
   })
   
   const PORT = 3001
