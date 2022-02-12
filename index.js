@@ -15,7 +15,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 
 app.get('/info', (req, res) => {
   Contact.find({}).then(contacts => {
-    res.send('Phonebook has '+contacts.length+' contacts. ' + new Date)
+    res.send(`Phonebook has '${contacts.length}' contacts. ${new Date}`)
   })
 })
 
@@ -25,23 +25,19 @@ app.get('/api/persons', (req, res) => {
   })
 })
 
-app.post('/api/persons', (request, response) => {  
+app.post('/api/persons', (request, response, next) => {  
   const body = request.body 
-  console.log(body)
-  if (body.name === '') {
-    return response.status(400).json({ error: 'name missing'})
-  }
-  if (body.number === '') {
-    return response.status(400).json({ error: 'number missing'})
-  }
+  
   const person = new Contact({
     name: body.name,
     number: body.number,
   })
   
-  person.save().then(savedContact => {
-    response.json(savedContact)
-  })
+  person.save()
+    .then(savedContact => {
+      response.json(savedContact)
+    })
+    .catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
@@ -84,6 +80,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id'})
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   }
 
   next(error)
