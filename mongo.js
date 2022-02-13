@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const mongoose = require('mongoose')
 
 if (process.argv.length<3) {
@@ -25,11 +26,11 @@ const contact = new Contact({
 })
 
 
-if(contact.name != null){
-contact.save().then(result => {
-  console.log('added '+contact.name+' number '+contact.number+'to phonebook')
-  mongoose.connection.close()
-})
+if(contact.name !== null){
+  contact.save().then(() => {
+    console.log('added '+contact.name+' number '+contact.number+'to phonebook')
+    mongoose.connection.close()
+  })
 } else {
   console.log('phonebook:')
   Contact.find({}).then(result => {
