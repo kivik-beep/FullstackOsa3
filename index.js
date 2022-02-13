@@ -32,7 +32,7 @@ app.post('/api/persons', (request, response, next) => {
     name: body.name,
     number: body.number,
   })
-  
+
   person.save()
     .then(savedContact => {
       response.json(savedContact)
